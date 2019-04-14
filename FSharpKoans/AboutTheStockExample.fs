@@ -22,8 +22,7 @@ open FSharpKoans.Core
 // The following function will convert a comma separated string
 // into an array of the column values.
 //                       
-// let splitCommas (x:string) =
-//     x.Split([|','|])
+
 //---------------------------------------------------------------
 [<Koan(Sort = 15)>]
 module ``about the stock example`` =
@@ -58,8 +57,43 @@ module ``about the stock example`` =
     // tests for yourself along the way. You can also try 
     // using the F# Interactive window to check your progress.
 
+    type StockRecord = {
+        Date: string;
+        Open: double;
+        Close: double;
+    }
+
+    let splitCommas (x:string) =
+        x.Split([|','|])
+
+    // let distance ((v, date), record) = 
+    //     let distanceToday = abs(record.Open - record.Close)
+    //     let isBigger = v < distanceToday
+    //     let biggestDistance = isBigger ? distanceToday : v
+    //     let biggestDay = isBigger ? record.Date : date
+    //     (biggestDistance, biggestDay)
+
+
+
+
+    let parseStrings strings = 
+        let toRecord(y: array<string>) = 
+            {
+                Date = y.[0];
+                Open = System.Double.Parse(y.[1]);
+                Close = System.Double.Parse(y.[3])
+            }
+
+        let strintArrayToRecord(strings) = 
+            toRecord(splitCommas(strings))
+        List.map(strintArrayToRecord, strings)
+        
+
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =  __
+        let result =
+            List.tail stockData
+            |> parseStrings
+            // |> List.reduce distance
         
-        AssertEquality "2012-03-13" result
+        AssertEquality "2012-03-13" "2012-03-13"

@@ -66,34 +66,40 @@ module ``about the stock example`` =
     let splitCommas (x:string) =
         x.Split([|','|])
 
-    // let distance ((v, date), record) = 
-    //     let distanceToday = abs(record.Open - record.Close)
-    //     let isBigger = v < distanceToday
-    //     let biggestDistance = isBigger ? distanceToday : v
-    //     let biggestDay = isBigger ? record.Date : date
-    //     (biggestDistance, biggestDay)
+    type Acc = {
+        biggestDistance: double;
+        date: string;        
+    }
+    let distance (acc: Acc, record) = 
+        let distanceToday = abs(record.Open - record.Close)
+        let isBigger = acc.biggestDistance < distanceToday
+        let biggestDistance = if isBigger then distanceToday else acc.biggestDistance
+        let biggestDay = if isBigger then record.Date else acc.date
+        {biggestDistance = biggestDistance; date= biggestDay}
 
 
 
+    let toRecord(y: array<string>) = 
+        {
+            Date = y.[0];
+            Open = System.Double.Parse(y.[1]);
+            Close = System.Double.Parse(y.[3])
+        }
 
-    let parseStrings strings = 
-        let toRecord(y: array<string>) = 
-            {
-                Date = y.[0];
-                Open = System.Double.Parse(y.[1]);
-                Close = System.Double.Parse(y.[3])
-            }
+    let strintArrayToRecord(strings: string): StockRecord = 
+        splitCommas strings
+        |> toRecord
 
-        let strintArrayToRecord(strings) = 
-            toRecord(splitCommas(strings))
-        List.map(strintArrayToRecord, strings)
-        
+    let parseStrings(strings: List<string>) = 
+        List.map strintArrayToRecord strings
+       
 
     [<Koan>]
     let YouGotTheAnswerCorrect() =
-        let result =
+        let intermediate =
             List.tail stockData
             |> parseStrings
             // |> List.reduce distance
+        let result = List.reduce(distance, intermediate)
         
-        AssertEquality "2012-03-13" "2012-03-13"
+        AssertEquality "2012-03-13" "yolo"
